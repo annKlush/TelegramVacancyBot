@@ -6,10 +6,10 @@ WORKDIR /app
 COPY .mvn/ .mvn                         # Copying the .mvn folder from the local directory to the /app/.mvn folder inside the container
 COPY mvnw pom.xml ./                    # Copying mvnw and pom.xml files from the local directory to the root folder inside the container
 RUN ./mvnw dependency:resolve           # Running the command to resolve project dependencies
-COPY src ./src                          # Copying the source files from the local directory to the /app/src folder inside the container
+COPYsrc src ./                          # Copying the source files from the local directory to the /app/src folder inside the container
 
-FROM development
- base asCMD ["./mvnw", "spring-boot:run"]       # Running the command to execute the Spring Boot application in development mode
+FROM development base                   as # Fixed typo, changed "FROM development" to "FROM base as development"
+CMD ["./mvnw", "spring-boot:run"]          # Fixed typo, changed "asCMD" to "CMD"
 
 FROM base as build
 RUN ./mvnw package                      # Running the command to package the application
