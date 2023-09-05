@@ -1,14 +1,19 @@
+# syntax=docker/dockerfile:1
 
-# Dockerfile
+FROM eclipse-temurin:17-jdk-jammy as base
+WORKDIR /app
+COPY .mvn/ .mvn
+COPY mvnw pom.xml ./
+RUN ./mvnw dependency:resolve
+COPY src ./src
 
-# Use the specified base image
-FROM eclipse-temurin:17-jdk-alpine
+FROM base as development
+CMD ["./mvnw", "spring-boot:run"]
 
-# Create a volume inside the container
-VOLUME /tmp
+FROM base as build
+RUN ./mvnw package
 
-# Copy the JAR file from the host machine to the container
-COPY target/*.jar app.jar
-
-# Specify the entry point command for the container to execute upon startup
-ENTRYPOINT ["java","-jar","/app.jar"]
+FROM eclipse-temurin:17-jre-jammy as production
+EXPOSE 8080
+COPY --from=build /telegramvacancybot/telegram-bot/target/spring-petclinic-*.jar /spring-petclinic.jar
+CMD ["java", "-Djava.security.egd=file:/dev/./urandom", "-jar", "/spring-petclinic.jar"]
