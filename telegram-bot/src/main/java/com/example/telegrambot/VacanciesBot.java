@@ -62,6 +62,20 @@ public class VacanciesBot extends TelegramLongPollingBot {
         execute(sendMessage);
     }
 
+    private void handleStartCommand(Update update) {
+        String text = update.getMessage().getText();
+        System.out.println("Text " + text);
+        SendMessage sendMessage = new SendMessage();
+        sendMessage.setChatId(update.getMessage().getChatId());
+        sendMessage.setText("Welcome to vacancies bot! Please, choose your title:");
+        sendMessage.setReplyMarkup(StartMenu.getStartMenu());
+        try {
+            execute(sendMessage);
+        } catch (TelegramApiException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     private void handleBackToVacanciesCommand(Update update) throws TelegramApiException {
         Long chatId = update.getCallbackQuery().getMessage().getChatId();
         String level = lastShownLevel.get(chatId);
@@ -84,29 +98,8 @@ public class VacanciesBot extends TelegramLongPollingBot {
         String longDesc = vacancy.getLongDesc();
         String link=vacancy.getLink();
         sendMessage.setText("Company name: "+company+" \n\n"+shortDescription+". \n\n"+longDesc+" \nsalary: "+salary+" \nLink: "+link);
-        sendMessage.setReplyMarkup(getBackToVacanciesMenu());
+        sendMessage.setReplyMarkup(LevelMenu.getBackToVacanciesMenu());
         execute(sendMessage);
-    }
-
-    private ReplyKeyboard getBackToVacanciesMenu() {
-        List<InlineKeyboardButton> row = new ArrayList<>();
-
-        InlineKeyboardButton backToVacanciesButton = new InlineKeyboardButton();
-        backToVacanciesButton.setText("Back to vacancies");
-        backToVacanciesButton.setCallbackData("backToVacancies");
-        row.add(backToVacanciesButton);
-
-        InlineKeyboardButton backToStartMenuButton = new InlineKeyboardButton();
-        backToStartMenuButton.setText("Back to start menu");
-        backToStartMenuButton.setCallbackData("backToStartMenu");
-        row.add(backToStartMenuButton);
-
-        /*InlineKeyboardButton toChatGPT = new InlineKeyboardButton();
-        toChatGPT.setText("Generate CV");
-        toChatGPT.setUrl("");
-        row.add(toChatGPT);*/
-
-        return new InlineKeyboardMarkup(List.of(row));
     }
 
     private void showJuniorVacancies(Update update) throws TelegramApiException {
@@ -139,26 +132,14 @@ public class VacanciesBot extends TelegramLongPollingBot {
         lastShownLevel.put(chatId, "senior");
     }
 
-    private void handleStartCommand(Update update) {
-        String text = update.getMessage().getText();
-        System.out.println("Text " + text);
-        SendMessage sendMessage = new SendMessage();
-        sendMessage.setChatId(update.getMessage().getChatId());
-        sendMessage.setText("Welcome to vacancies bot! Please, choose your title:");
-        sendMessage.setReplyMarkup(StartMenu.getStartMenu());
-        try {
-            execute(sendMessage);
-        } catch (TelegramApiException e) {
-            throw new RuntimeException(e);
-        }
-    }
+
 
     public VacanciesBot() {
-        super("6642036638:AAFYO1aisxTcSeHr6UpntV_URYEjcYBwppY");
+        super(Constant.getBotToken());
     }
 
     @Override
     public String getBotUsername() {
-        return "Java_Mate_Vacancies_bot";
+        return Constant.getBotName();
     }
 }

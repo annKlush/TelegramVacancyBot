@@ -19,21 +19,27 @@ public class LevelMenu {
     public LevelMenu(VacancyService vacancyService) {
         this.vacancyService = vacancyService;
     }
-
-    private static ReplyKeyboard getVacanciesMenu(List<VacancyDto> vacancies) {
+    public static ReplyKeyboard getBackToVacanciesMenu() {
         List<InlineKeyboardButton> row = new ArrayList<>();
 
-        for (VacancyDto vacancy : vacancies) {
-            InlineKeyboardButton vacancyButton = new InlineKeyboardButton();
-            vacancyButton.setText(vacancy.getTitle());
-            vacancyButton.setCallbackData("vacancyId=" + vacancy.getId());
-            row.add(vacancyButton);
-        }
+        InlineKeyboardButton backToVacanciesButton = new InlineKeyboardButton();
+        backToVacanciesButton.setText("Back to vacancies");
+        backToVacanciesButton.setCallbackData("backToVacancies");
+        row.add(backToVacanciesButton);
 
-        InlineKeyboardMarkup keyboard = new InlineKeyboardMarkup();
-        keyboard.setKeyboard(List.of(row));
-        return keyboard;
+        InlineKeyboardButton backToStartMenuButton = new InlineKeyboardButton();
+        backToStartMenuButton.setText("Back to start menu");
+        backToStartMenuButton.setCallbackData("backToStartMenu");
+        row.add(backToStartMenuButton);
+
+        InlineKeyboardButton toChatGPT = new InlineKeyboardButton();
+        toChatGPT.setText("Generate CV");
+        toChatGPT.setUrl("https://chat.openai.com/");
+        row.add(toChatGPT);
+
+        return new InlineKeyboardMarkup(List.of(row));
     }
+
     public static ReplyKeyboard getJuniorVacanciesMenu() {
         List<VacancyDto> juniorVacancies = vacancyService.getJuniorVacancies();
         return getVacanciesMenu(juniorVacancies);
@@ -47,5 +53,19 @@ public class LevelMenu {
     public static ReplyKeyboard getSeniorVacanciesMenu() {
         List<VacancyDto> seniorVacancies = vacancyService.getSeniorVacancies();
         return getVacanciesMenu(seniorVacancies);
+    }
+    private static ReplyKeyboard getVacanciesMenu(List<VacancyDto> vacancies) {
+        List<InlineKeyboardButton> row = new ArrayList<>();
+
+        for (VacancyDto vacancy : vacancies) {
+            InlineKeyboardButton vacancyButton = new InlineKeyboardButton();
+            vacancyButton.setText(vacancy.getTitle());
+            vacancyButton.setCallbackData("vacancyId=" + vacancy.getId());
+            row.add(vacancyButton);
+        }
+
+        InlineKeyboardMarkup keyboard = new InlineKeyboardMarkup();
+        keyboard.setKeyboard(List.of(row));
+        return keyboard;
     }
 }
