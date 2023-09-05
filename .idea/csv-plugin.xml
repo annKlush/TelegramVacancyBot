@@ -3,6 +3,13 @@
   <component name="CsvFileAttributes">
     <option name="attributeMap">
       <map>
+        <entry key="C:\Users\Admin\IdeaProjects\TelegramVacancyBot\telegram-bot\src\main\resources\vacancies.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="\telegram-bot\src\main\resources\vacancies.csv">
           <value>
             <Attribute>
