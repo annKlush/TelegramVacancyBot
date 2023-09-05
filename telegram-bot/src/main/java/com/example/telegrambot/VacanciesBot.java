@@ -1,6 +1,7 @@
 package com.example.telegrambot;
 
 import com.example.telegrambot.dto.VacancyDto;
+import com.example.telegrambot.menu.StartMenu;
 import com.example.telegrambot.service.VacancyService;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,10 +14,7 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 
 @Component
@@ -106,7 +104,7 @@ public class VacanciesBot extends TelegramLongPollingBot {
         SendMessage sendMessage = new SendMessage();
         sendMessage.setText("Choose title:");
         sendMessage.setChatId(update.getCallbackQuery().getMessage().getChatId());
-        sendMessage.setReplyMarkup(getStartMenu());
+        sendMessage.setReplyMarkup(StartMenu.getStartMenu());
         execute(sendMessage);
     }
 
@@ -121,27 +119,7 @@ public class VacanciesBot extends TelegramLongPollingBot {
             showSeniorVacancies(update);
         }
     }
-    private ReplyKeyboard getStartMenu() {
-        List<InlineKeyboardButton> row = new ArrayList<>();
-        InlineKeyboardButton junior = new InlineKeyboardButton();
-        junior.setText("Junior");
-        junior.setCallbackData("showJuniorVacancies");
-        row.add(junior);
 
-        InlineKeyboardButton middle = new InlineKeyboardButton();
-        middle.setText("Middle");
-        middle.setCallbackData("showMiddleVacancies");
-        row.add(middle);
-
-        InlineKeyboardButton senior = new InlineKeyboardButton();
-        senior.setText("Senior");
-        senior.setCallbackData("showSeniorVacancies");
-        row.add(senior);
-
-        InlineKeyboardMarkup keyboard = new InlineKeyboardMarkup();
-        keyboard.setKeyboard(List.of(row));
-        return keyboard;
-    }
     private void showVacancyDescription(String id, Update update) throws TelegramApiException {
         SendMessage sendMessage = new SendMessage();
         sendMessage.setChatId(update.getCallbackQuery().getMessage().getChatId());
@@ -216,7 +194,7 @@ public class VacanciesBot extends TelegramLongPollingBot {
         SendMessage sendMessage = new SendMessage();
         sendMessage.setChatId(update.getMessage().getChatId());
         sendMessage.setText("Welcome to vacancies bot! Please, choose your title:");
-        sendMessage.setReplyMarkup(getStartMenu());
+        sendMessage.setReplyMarkup(StartMenu.getStartMenu());
         try {
             execute(sendMessage);
         } catch (TelegramApiException e) {
