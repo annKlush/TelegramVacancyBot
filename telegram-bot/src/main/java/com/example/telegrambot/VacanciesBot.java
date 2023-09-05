@@ -1,6 +1,7 @@
 package com.example.telegrambot;
 
 import com.example.telegrambot.dto.VacancyDto;
+import com.example.telegrambot.menu.LevelMenu;
 import com.example.telegrambot.menu.StartMenu;
 import com.example.telegrambot.service.VacancyService;
 
@@ -51,53 +52,6 @@ public class VacanciesBot extends TelegramLongPollingBot {
         } catch (Exception e) {
             throw new RuntimeException("Can`t send message to user!", e);
         }
-    }
-
-    private ReplyKeyboard getMiddleVacanciesMenu() {
-        List<InlineKeyboardButton> row = new ArrayList<>();
-
-        List<VacancyDto> vacancies = vacancyService.getMiddleVacancies();
-        for (VacancyDto vacancy : vacancies) {
-            InlineKeyboardButton vacancyButton = new InlineKeyboardButton();
-            vacancyButton.setText(vacancy.getTitle());
-            vacancyButton.setCallbackData("vacancyId=" + vacancy.getId());
-            row.add(vacancyButton);
-        }
-
-        InlineKeyboardMarkup keyboard = new InlineKeyboardMarkup();
-        keyboard.setKeyboard(List.of(row));
-        return keyboard;
-    }
-
-    private ReplyKeyboard getJuniorVacanciesMenu() {
-        List<InlineKeyboardButton> row = new ArrayList<>();
-        List<VacancyDto> vacancies = vacancyService.getJuniorVacancies();
-        for (VacancyDto vacancy : vacancies) {
-            InlineKeyboardButton vacancyButton = new InlineKeyboardButton();
-            vacancyButton.setText(vacancy.getTitle());
-            vacancyButton.setCallbackData("vacancyId=" + vacancy.getId());
-            row.add(vacancyButton);
-        }
-
-        InlineKeyboardMarkup keyboard = new InlineKeyboardMarkup();
-        keyboard.setKeyboard(List.of(row));
-        return keyboard;
-    }
-
-    private ReplyKeyboard getSeniorVacanciesMenu() {
-        List<InlineKeyboardButton> row = new ArrayList<>();
-
-        List<VacancyDto> vacancies = vacancyService.getSeniorVacancies();
-        for (VacancyDto vacancy : vacancies) {
-            InlineKeyboardButton vacancyButton = new InlineKeyboardButton();
-            vacancyButton.setText(vacancy.getTitle());
-            vacancyButton.setCallbackData("vacancyId=" + vacancy.getId());
-            row.add(vacancyButton);
-        }
-
-        InlineKeyboardMarkup keyboard = new InlineKeyboardMarkup();
-        keyboard.setKeyboard(List.of(row));
-        return keyboard;
     }
 
     private void handleBackStartCommand(Update update) throws TelegramApiException {
@@ -160,7 +114,7 @@ public class VacanciesBot extends TelegramLongPollingBot {
         sendMessage.setText("Please, choose vacancy");
         Long chatId = update.getCallbackQuery().getMessage().getChatId();
         sendMessage.setChatId(chatId);
-        sendMessage.setReplyMarkup(getJuniorVacanciesMenu());
+        sendMessage.setReplyMarkup(LevelMenu.getJuniorVacanciesMenu());
         execute(sendMessage);
         lastShownLevel.put(chatId, "junior");
     }
@@ -170,7 +124,7 @@ public class VacanciesBot extends TelegramLongPollingBot {
         sendMessage.setText("Please, choose vacancy");
         Long chatId = update.getCallbackQuery().getMessage().getChatId();
         sendMessage.setChatId(chatId);
-        sendMessage.setReplyMarkup(getMiddleVacanciesMenu());
+        sendMessage.setReplyMarkup(LevelMenu.getMiddleVacanciesMenu());
         execute(sendMessage);
         lastShownLevel.put(chatId, "middle");
     }
@@ -180,13 +134,10 @@ public class VacanciesBot extends TelegramLongPollingBot {
         sendMessage.setText("Please, choose vacancy");
         Long chatId = update.getCallbackQuery().getMessage().getChatId();
         sendMessage.setChatId(chatId);
-        sendMessage.setReplyMarkup(getSeniorVacanciesMenu());
+        sendMessage.setReplyMarkup(LevelMenu.getSeniorVacanciesMenu());
         execute(sendMessage);
         lastShownLevel.put(chatId, "senior");
     }
-
-
-
 
     private void handleStartCommand(Update update) {
         String text = update.getMessage().getText();
