@@ -1,16 +1,14 @@
+# Use a base image with a Java runtime (e.g., OpenJDK)
+FROM adoptopenjdk/openjdk11:latest
 
-FROM ubuntu:latest
+# Set the working directory
+WORKDIR /app
 
-# Update the package manager and install nginx
-RUN apt-get update && apt-get install -y nginx
-# Fixed the error by adding 'update' option to apt-get command and '-y' flag to install nginx without user interaction.
+# Copy the JAR file of your Spring Boot application to the container
+COPY target/telegram-bot-0.0.1-SNAPSHOT.jar app.jar
 
-# Copy the index.html file to the appropriate directory
-COPY index.html /var/www/html/index.html
-# Fixed typo htm to html in the destination path.
+# Expose the port that your Spring Boot application is listening on (e.g., 8080)
+EXPOSE 8080
 
-# Expose port 80 for HTTP traffic
-EXPOSE 80
-
-# Start the nginx service
-CMD ["nginx", "-g", "daemon off;"]
+# Define the entry point to start your Spring Boot application
+CMD ["java", "-jar", "app.jar"]
